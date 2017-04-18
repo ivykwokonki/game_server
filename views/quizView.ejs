@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include asset/lib %>
+</head>
+<body class="container"> 
+<!-- style="width:100%; heigh:100%; padding: 0;" -->
+    <%- include navbar %>
+      
+    <div class="container-fluid text-center">    
+        <div class="row content">
+            <% for(var k=0; k<Quiz.length; k++) { %>
+                <h2 style="color:#317eac;">Quiz Name : <%= Quiz[k].name %></h2>
+                <button class="btn btn-danger" onclick="deleteQuiz('<%= Quiz[k]._id %>')"
+                style="float: left;margin: -20px 0px 10px 30px;">Delete</button>
+                <table style="border-bottom: 1px solid #ddd;margin-bottom: 50px;" class="table table-striped">
+                    <thead>
+                        <th>Question</th>
+                        <th>Answer</th>
+                        <th>choice A</th>
+                        <th>choice B</th>
+                        <th>choice C</th>
+                        <th>choice D</th>
+                    </thead>
+                    <tbody>
+                        <% for(var i=0; i<Quiz[k].Quiz.length; i++) { %>
+                            <tr>
+                                <td><%= Quiz[k].Quiz[i].question %></td>
+                                <td><%= Quiz[k].Quiz[i].answer %></td>
+                                <td><%= Quiz[k].Quiz[i].choice.A %></td>
+                                <td><%= Quiz[k].Quiz[i].choice.B %></td>
+                                <td><%= Quiz[k].Quiz[i].choice.C %></td>
+                                <td><%= Quiz[k].Quiz[i].choice.D %></td>
+                           </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            <% } %>
+      </div>
+    </div>
+
+</body>
+</html>

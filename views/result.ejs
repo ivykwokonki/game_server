@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include asset/lib %>
+</head>
+<body class="container"> 
+<!-- style="width:100%; heigh:100%; padding: 0;" -->
+    <%- include navbar %>
+      
+
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-md-offset-1">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th class="text-center">Quiz</th>
+                        <th class="text-center">Student</th>
+                        <th> Analysis </th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% for(var k=0; k<result.length; k++) { %>
+                    <tr>
+                        <td class="col-sm-6 col-md-4">
+                        <div class="media">
+                            <a class="thumbnail pull-left" style="padding: 5px;">
+                            <img class="media-object" src="/images/<%=result[k].game%>.png" style="width: 72px; height: 72px;">
+                            </a>
+                            <div class="media-body" style="padding: 10px;">
+                                <h4 class="media-heading"><a><%= result[k].roomName %></a></h4>
+                                <h5 class="media-heading"> game 
+                                    <a class="text-success">
+                                    <% if( result[k].game == "mining" ){ %>
+                                        Cloud in Sky
+                                    <% }else{ %>
+                                        <%= result[k].game %>
+                                    <% } %>
+                                    </a>
+                                </h5>
+                                <span>Number of question: </span><span class="text-warning"><strong><%= result[k].Qcount %></strong></span>
+                            </div>
+                        </div></td>
+                        <td class="col-sm-2 col-md-2 text-center">
+                            <strong><%= result[k].quizName %></strong>
+                        </td>
+                        <td class="col-sm-2 col-md-2 text-center">
+                            <% for(var j=0; j<result[k].playerList.length; j++) { %>
+                                <%= result[k].playerList[j] %> <br>
+                            <% } %>
+                        </td>
+                        <td class="col-sm-2 col-md-2">
+                        <a href="/result/PieChart/?id=<%= result[k]['_id'] %>&Qcount=<%= result[k]['Qcount'] %>" 
+                        class="btn btn-info pie_chart_btn" style="margin:5px;">Pie Chart
+                        </a>
+                        <a href="/result/TimeLine/?id=<%= result[k]['_id'] %>&Qcount=<%= result[k]['Qcount'] %>" 
+                        class="btn btn-warning time_line_btn" style="margin:5px;">Timeline
+                        </a>
+                        <a href="/result/allresult/?id=<%= result[k]['_id'] %>" 
+                        class="btn btn-success time_line_btn" style="margin:5px;">All Result
+                        </a>
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</body>
+<script type="text/javascript">
+</script>
+</html>

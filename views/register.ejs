@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include asset/lib %>
+</head>
+<body class="container">
+
+	<div class="row">
+	    <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+			<form id        =  "uploadForm"
+	         enctype   =  "multipart/form-data"
+	         action    =  "/register"
+	         method    =  "post">
+				<h2>Teacher Please Sign Up <small>Plature </small></h2>
+				<hr class="colorgraph">
+				<div class="form-group">
+					<input type="text" name="username" id="username" class="form-control input-lg" placeholder="Username" tabindex="3">
+				</div>
+				<div class="form-group">
+					<input type="email" name="email" id="email" class="form-control input-lg" placeholder="Email Address" tabindex="4">
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-6 col-md-6">
+						<div class="form-group">
+							<input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password" tabindex="5">
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-6 col-md-6">
+						<div class="form-group">
+							<input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-lg" placeholder="Confirm Password" tabindex="6">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group">
+				      <div class="col-xs-12 col-sm-6 col-md-6">
+				        <div class="radio">
+				          <label>
+				            <input type="radio" name="gender" id="optionsRadios1" value="male" checked="">
+				            Male
+				          </label>
+				        </div>
+				        </div>
+				       <div class="col-xs-12 col-sm-6 col-md-6">
+				        <div class="radio">
+				          <label>
+				            <input type="radio" name="gender" id="optionsRadios2" value="female">
+				            Female
+				          </label>
+				        </div>
+				      </div>
+				    </div>
+			    </div>
+				<hr class="colorgraph">
+				<div class="row">
+					<div class="col-xs-12 col-md-6"><input type="submit" value="Register" class="btn btn-primary btn-block btn-lg" tabindex="7"></div>
+					<div class="col-xs-12 col-md-6"><a href="/login/" class="btn btn-success btn-block btn-lg">Sign In</a></div>
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+
+</script>
+</html>

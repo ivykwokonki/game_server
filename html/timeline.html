@@ -1,0 +1,269 @@
+<!doctype html>
+<html>
+<head>
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="../public/javascripts/common.js"></script>
+
+  <style type="text/css">
+  	.axis path, .axis line {
+	    fill: none;
+	    stroke: black;
+	    shape-rendering: crispEdges;
+	}
+	.axis text {
+	    font-family: sans-serif;
+	    font-size: 11px;
+	}
+	#tooltip {
+	    position: absolute;
+	    text-align: center;
+	    width: 40px;
+	    height: auto;
+	    padding: 10px;
+	    background-color: white;
+	    -webkit-border-radius: 10px;
+	    -moz-border-radius: 10px;
+	    border-radius: 10px;
+	    -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	    -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	    pointer-events: none;
+	}
+	#tooltip.hidden {
+	    display: none;
+	}
+	#tooltip p {
+	    margin: 0;
+	    font-family: sans-serif;
+	    font-size: 16px;
+	    line-height: 20px;
+	}
+  </style>
+  <script type="text/javascript">
+
+  </script>
+</head>
+<body>
+<div id="tooltip" class="hidden">
+    <p><span id="value">100</span>
+    </p>
+</div>
+
+</body>
+<script type="text/javascript">
+
+  	var margins = {
+	    top: 12,
+	    left: 48,
+	    right: 24,
+	    bottom: 24
+	},
+	legendPanel = {
+	    width: 180
+	},
+	width = 700 - margins.left - margins.right - legendPanel.width,
+	    height = 300 - margins.top - margins.bottom,
+	    series = "";
+	    // dataset = [{
+	    //     data: [{
+	    //         month: 'DrChim',
+	    //         count: 10
+	    //     }, {
+	    //         month: 'DrHui',
+	    //         count: 5
+	    //     }
+
+	    //     ],
+	    //     name: 'Series #1'
+	    // }, {
+	    //     data: [{
+	    //         month: 'DrChim',
+	    //         count: 2
+	    //     }, {
+	    //         month: 'DrHui',
+	    //         count: 5
+	    //     }
+
+	    //     ],
+	    //     name: 'Series #2'
+	    // },{
+	    //     data: [{
+	    //         month: 'DrChim',
+	    //         count: 2
+	    //     }, {
+	    //         month: 'DrHui',
+	    //         count: 5
+	    //     }],
+	    //     name: 'Series #2'
+	    // }],
+
+
+
+	var dataset = [];
+	$(document).ready(function() {
+
+
+	   $.get(url+ "api/get_result", function(data, status){
+	   		dataset = [];
+	   		for(i=0;i<10;i++){
+				var temp = {
+			        data: [{
+			            month: 'DrChim',
+			            count: 0
+			        }, {
+			            month: 'DrHui',
+			            count: 0
+			        }],
+			        name: 'Question '+i
+		    	};
+				dataset.push(temp);
+
+			}
+	   		for(key in data){
+	   			var Qid =  data[key].Qid;
+	   			var time = data[key].time;
+	   			var name = data[key].name;
+
+	   			for(item in dataset[Qid].data){
+	   				if(dataset[Qid].data[item].month == name){
+	   					dataset[Qid].data[item].count = time;
+	   				}
+	   			}
+
+	   		}
+
+	  //  		for(i=0;i<10;i++){
+			// 	Donut3D.draw("Donut"+i, randomData(i), 450, 200*i+100, 130, 100, 30, 0);
+			// }
+			series = dataset.map(function (d) {
+		        return d.name;
+		    })
+			dataset = dataset.map(function (d) {
+		        return d.data.map(function (o, i) {
+		            // Structure it so that your numeric
+		            // axis (the stacked amount) is y
+		            return {
+		                y: o.count,
+		                x: o.month
+		            };
+		        });
+		    }),
+	    stack = d3.layout.stack();
+	    stack(dataset);
+	    	var dataset = dataset.map(function (group) {
+			    return group.map(function (d) {
+			        // Invert the x and y values, and y0 becomes x0
+			        return {
+			            x: d.y,
+			            y: d.x,
+			            x0: d.y0
+			        };
+			    });
+			}),
+			    svg = d3.select('body')
+			        .append('svg')
+			        .attr('width', width + margins.left + margins.right + legendPanel.width)
+			        .attr('height', height + margins.top + margins.bottom)
+			        .append('g')
+			        .attr('transform', 'translate(' + margins.left + ',' + margins.top + ')'),
+			    xMax = d3.max(dataset, function (group) {
+			        return d3.max(group, function (d) {
+			            return d.x + d.x0;
+			        });
+			    }),
+			    xScale = d3.scale.linear()
+			        .domain([0, xMax])
+			        .range([0, width]),
+			    months = dataset[0].map(function (d) {
+			        return d.y;
+			    }),
+			    _ = console.log(months),
+			    yScale = d3.scale.ordinal()
+			        .domain(months)
+			        .rangeRoundBands([0, height], .1),
+			    xAxis = d3.svg.axis()
+			        .scale(xScale)
+			        .orient('bottom'),
+			    yAxis = d3.svg.axis()
+			        .scale(yScale)
+			        .orient('left'),
+			    colours = d3.scale.category10(),
+			    groups = svg.selectAll('g')
+			        .data(dataset)
+			        .enter()
+			        .append('g')
+			        .style('fill', function (d, i) {
+			        return colours(i);
+			    }),
+			    rects = groups.selectAll('rect')
+			        .data(function (d) {
+			        return d;
+			    })
+			        .enter()
+			        .append('rect')
+			        .attr('x', function (d) {
+			        return xScale(d.x0);
+			    })
+			        .attr('y', function (d, i) {
+			        return yScale(d.y);
+			    })
+			        .attr('height', function (d) {
+			        return yScale.rangeBand();
+			    })
+			        .attr('width', function (d) {
+			        return xScale(d.x);
+			    })
+			        .on('mouseover', function (d) {
+			        var xPos = parseFloat(d3.select(this).attr('x')) / 2 + width / 2;
+			        var yPos = parseFloat(d3.select(this).attr('y')) + yScale.rangeBand() / 2;
+
+			        d3.select('#tooltip')
+			            .style('left', xPos + 'px')
+			            .style('top', yPos + 'px')
+			            .select('#value')
+			            .text(d.x);
+
+			        d3.select('#tooltip').classed('hidden', false);
+			    })
+			        .on('mouseout', function () {
+			        d3.select('#tooltip').classed('hidden', true);
+			    })
+
+			    svg.append('g')
+			        .attr('class', 'axis')
+			        .attr('transform', 'translate(0,' + height + ')')
+			        .call(xAxis);
+
+			svg.append('g')
+			    .attr('class', 'axis')
+			    .call(yAxis);
+
+			svg.append('rect')
+			    .attr('fill', 'yellow')
+			    .attr('width', 160)
+			    .attr('height', 30 * dataset.length)
+			    .attr('x', width + margins.left)
+			    .attr('y', 0);
+
+			series.forEach(function (s, i) {
+			    svg.append('text')
+			        .attr('fill', 'black')
+			        .attr('x', width + margins.left + 8)
+			        .attr('y', i * 24 + 24)
+			        .text(s);
+			    svg.append('rect')
+			        .attr('fill', colours(i))
+			        .attr('width', 60)
+			        .attr('height', 20)
+			        .attr('x', width + margins.left + 90)
+			        .attr('y', i * 24 + 6);
+			});
+	    });
+	   
+	 });
+	
+
+
+</script>
+</html>

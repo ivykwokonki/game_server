@@ -1,0 +1,18 @@
+{
+  // "GCLOUD_PROJECT": "hkucsfyp002",
+  // "CLOUD_BUCKET": "[YOUR_CLOUD_BUCKET]",
+  // "DATA_BACKEND": "datastore",
+  // "OAUTH2_CLIENT_ID": "504501926199-462hc5jasj8o96265hpcl3jmuf3ga0re.apps.googleusercontent.com",
+  // "OAUTH2_CLIENT_SECRET": "oFjFWb0FKcTL7vxlMQDRlhD7",
+  // "OAUTH2_CALLBACK": "https://hkucsfyp002.appspot.com/auth/google/callback",
+  // "OAUTH2_CALLBACK": "http://hkucsfyp002.appspot.com/auth/google/callback",
+  // "MEMCACHE_URL": "pub-memcache-13028.ap-southeast-2-1.1.ec2.garantiadata.com:13028"
+  "GCLOUD_PROJECT": "fypplature",
+  "CLOUD_BUCKET": "fypplature",
+  "DATA_BACKEND": "datastore",
+  "OAUTH2_CLIENT_ID": "527255644740-6g20cfrkb57lff4k8tak0eafdu0f0dmv.apps.googleusercontent.com",
+  "OAUTH2_CLIENT_SECRET": "aw9X20ue7FktydmKVhiige7Z",
+  "OAUTH2_CALLBACK": "http://fypplature.appspot.com/auth/google/callback"
+
+}
+

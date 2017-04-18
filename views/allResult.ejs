@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include asset/lib %>
+    <style>
+        th { text-align: center;}
+        .green{ color:green; }
+        .red{ color:red; }
+    </style>
+</head>
+<body class="container"> 
+<!-- style="width:100%; heigh:100%; padding: 0;" -->
+    <%- include navbar %>
+      
+    <div class="container-fluid text-center">    
+        <div class="row content">
+            <a href="/result/" class="btn btn-primary" style="margin: 8px; float: left;">Back</a>
+                <table style="border-bottom: 1px solid #ddd;margin-bottom: 50px;" class="table table-striped">
+                    <thead>
+                        <th>Student name</th>
+                        <% for(var k=0; k<gameData.Qcount; k++) { %>
+                        <th>Q<%= k+1 %></th>
+                        <% } %>
+                        <th>Correct</th>
+                        <th>Incorrect</th>
+                    </thead>
+                    <tbody>
+                        <% for(var i=0; i<allresult.length; i++) { %>
+                            <tr>
+                                <td><%= allresult[i].name %></td>
+                                <% for(var j=0; j<gameData.Qcount; j++) { %>
+                                    <% if (allresult[i].result[j] == true) { %>
+                                        <td><%# allresult[i].result[j] %>
+                                            <span class="green glyphicon glyphicon-ok"></span>
+                                        </td>
+                                    <% }else{ %>
+                                        <td><%# allresult[i].result[j] %>
+                                            <span class="red glyphicon glyphicon-remove"></span>
+                                        </td>
+                                    <% } %>
+                                <% } %>
+                                <td><%= allresult[i].correct %></td>
+                                <td><%= allresult[i].incorrect %></td>
+                           </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            
+      </div>
+    </div>
+
+</body>
+</html>
