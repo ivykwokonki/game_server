@@ -345,7 +345,7 @@ router.post('/input_quiz/upload', function(req, res) {
                     } 
 
                     var output = {};
-
+                    console.log(data);
                     for(var i=0;i<data.length;i++){
                         output[i]=data[i];
                     }
@@ -363,7 +363,7 @@ router.post('/input_quiz/upload', function(req, res) {
                                 res.status(500).send("repeated name!");
                             else{
                                 //todo created by hard code
-                                console.log("output");
+                                console.log(output);
                                 var newQuiz={
                                     name: req.body.quizName,
                                     created_by: req.session.username,    
@@ -415,7 +415,6 @@ router.get('/view_quiz', function(req, res, next) {
                     for(q in body[i].Quiz){
                         output.push ( body[i].Quiz[q] );
                     }
-                    console.log(body[i].Quiz);
                     body[i].Quiz = output;
                 }
                 res.render('quizView', { tag: 'quizView' , Quiz: body});
