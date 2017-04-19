@@ -138,26 +138,13 @@
 			    return 100;
 			})
 		    .text(function(d){
-		    	var question = id.replace("Donut", "Question ");
+		    	var question = id.replace("Donut", "");
+		    	var a = parseInt(question);
+		    	a+=1;
+		    	question = "Question " + a;
 			     return question;
 			});
-		  
-		// var yTextPadding = 20;
-		// slices.selectAll(".label")
-		// 	.data(data)
-		// 	.enter()
-		// 	.append("text")
-		// 	.attr("class", "bartext")
-		// 	.attr("text-anchor", "middle")
-		// 	.attr("fill", "white")
-		// 	.attr("x", function(d,i) {
-		// 	    return x(i)+x.rangeBand()/2;
-		// 	}).attr("y", function(d,i) {
-		// 	    return height-y(d)+yTextPadding;
-		// 	})
-		// 	.text(function(d){
-		// 	     return "abc";
-		// 	});	
+
 	}
 	
 	this.Donut3D = Donut3D;

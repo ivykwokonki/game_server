@@ -31,27 +31,6 @@ router.use(function(req, res, next) {
 });
 
 
-var storage = multer.diskStorage({ //multers disk storage settings
-    destination: function (req, file, cb) {
-        cb(null, './uploads/')
-    },
-    filename: function (req, file, cb) {
-        var datetimestamp = Date.now();
-        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
-    }
-});
-
-var upload = multer({ //multer settings
-    storage: storage,
-    fileFilter : function(req, file, callback) { //file filter
-        if (['xlsx'].indexOf(file.originalname.split('.')[file.originalname.split('.').length-1]) === -1) {
-            return callback(new Error('Wrong extension type'));
-        }
-        callback(null, true);
-    }
-}).single('file');
-
-
 /* GET home page. */
 
 router.get('/login', function(req, res, next) {
@@ -152,7 +131,7 @@ router.get('/result', function(req, res, next) {
                     }else if(result.length){
                         res.render('result', { tag: 'result',result:result });
                     }else{
-                        res.render("No documents found");
+                        res.render('nonFound', { tag: 'result',error:"No game result found!" });
                     }
                     
                     db.close();
@@ -322,10 +301,33 @@ router.get('/input_quiz', function(req, res, next) {
 router.get('/input_quiz/download', function(req, res) {
     res.download('public/template.xlsx');
 });
+
+
+var storage = multer.diskStorage({ //multers disk storage settings
+    destination: function (req, file, cb) {
+        cb(null, './uploads/')
+    },
+    filename: function (req, file, cb) {
+        var datetimestamp = Date.now();
+        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
+    }
+});
+
+var upload = multer({ //multer settings
+    storage: storage,
+    fileFilter : function(req, file, callback) { //file filter
+        if (['xlsx'].indexOf(file.originalname.split('.')[file.originalname.split('.').length-1]) === -1) {
+            return callback(new Error('Wrong extension type'));
+        }
+        callback(null, true);
+    }
+}).single('file');
+
+
 /** API path that will upload the files */
 router.post('/input_quiz/upload', function(req, res) {
 	upload(req,res,function(err){
-
+    console.log(req);
         if(!req.file){
                 console.log("No file passed");
                 res.json({error_code:1,err_desc:"No file passed"});
@@ -335,8 +337,6 @@ router.post('/input_quiz/upload', function(req, res) {
                  res.json({error_code:1,err_desc:err});
                  return;
             }
-        console.log("req.file.path:");
-        console.log(req.file.path);
         try {
             convertExcel(req.file.path,null,null
                 ,function(err,data){
@@ -420,7 +420,7 @@ router.get('/view_quiz', function(req, res, next) {
                 }
                 res.render('quizView', { tag: 'quizView' , Quiz: body});
             }else{
-                res.status(400).send({msg:error});         
+                res.render('nonFound', { tag: 'quizView' , error: "No quiz found!"});       
             }
         });
     }else
