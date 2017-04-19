@@ -14,7 +14,6 @@
 url = "http://35.187.217.141:8080/";
 
 function deleteQuiz(id){
-console.log("receive deleteQuiz!");
     $.ajax({
 		type: "GET",
 		url: url + "api/deleteQuiz/?id=" + id ,

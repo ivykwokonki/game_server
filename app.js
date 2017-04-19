@@ -9,6 +9,7 @@ var session = require('express-session');
 var teacher = require('./routes/teacher');
 var api = require('./routes/api');
 var mongoose = require('mongoose');
+var convertExcel = require('excel-as-json').processFile;
 
 // var students = require('./routes/students');
 

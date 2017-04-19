@@ -327,7 +327,6 @@ var upload = multer({ //multer settings
 /** API path that will upload the files */
 router.post('/input_quiz/upload', function(req, res) {
 	upload(req,res,function(err){
-    console.log(req);
         if(!req.file){
                 console.log("No file passed");
                 res.json({error_code:1,err_desc:"No file passed"});
@@ -338,8 +337,7 @@ router.post('/input_quiz/upload', function(req, res) {
                  return;
             }
         try {
-            convertExcel(req.file.path,null,null
-                ,function(err,data){
+            convertExcel(req.file.path,null,null,function(err,data){
                     if(err) {
                         return res.json({error_code:1,err_desc:err, data: null});
                     } 

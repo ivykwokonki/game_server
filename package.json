@@ -2,8 +2,8 @@
   "name": "Plature",
   "version": "0.0.1",
   "private": true,
-  "engines":{
-    "node":">=4.3.2"
+  "engines": {
+    "node": ">=4.3.2"
   },
   "scripts": {
     "start": "node app.js"
@@ -24,7 +24,7 @@
     "passport-local": "*",
     "serve-favicon": "~2.3.0",
     "socket.io": "1.7.3",
-    "express-session":  "1.14.2",
+    "express-session": "1.14.2",
     "excel-as-json": "2.0.0"
   },
   "devDependencies": {
