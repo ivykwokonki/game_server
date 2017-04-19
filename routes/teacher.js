@@ -30,7 +30,99 @@ router.use(function(req, res, next) {
     next();
 });
 
+var storage = multer.diskStorage({ //multers disk storage settings
+    destination: function (req, file, cb) {
+        cb(null, './uploads/')
+    },
+    filename: function (req, file, cb) {
+        var datetimestamp = Date.now();
+        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
+    }
+});
 
+var upload = multer({ //multer settings
+    storage: storage,
+    fileFilter : function(req, file, callback) { //file filter
+        if (['xlsx'].indexOf(file.originalname.split('.')[file.originalname.split('.').length-1]) === -1) {
+            return callback(new Error('Wrong extension type'));
+        }
+        callback(null, true);
+    }
+}).single('file');
+
+
+/** API path that will upload the files */
+router.post('/input_quiz/upload', function(req, res) {
+    upload(req,res,function(err){
+        if(!req.file){
+                console.log("No file passed");
+                res.json({error_code:1,err_desc:"No file passed"});
+                return;
+            
+        }if(err){
+                 res.json({error_code:1,err_desc:err});
+                 return;
+            
+        }try {
+            // convertExcel(req.file.path,null,null,function(err,data){
+                convertExcel("uploads/test.xlsx","uploadJSON/",null,function(err,data){
+                    if(err) {
+                        return res.json({error_code:1,err_desc:err, data: null});
+                    } 
+
+                    var output = {};
+                    console.log(data);
+                    for(var i=0;i<data.length;i++){
+                        output[i]=data[i];
+                    }
+
+                    var MongoClient = mongodb.MongoClient;
+
+                    MongoClient.connect(url, function(err, db){
+                        if(err){
+                            console.log('Unable to connect Server', err);
+                        }
+                        var QuizList = db.collection('QuizList');
+                        QuizList.find({name : req.body.quizName}).toArray(function(err, result){
+                            console.log(result);
+                            if(result.length>0)
+                                res.status(500).send("repeated name!");
+                            else{
+                                //todo created by hard code
+                                console.log(output);
+                                var newQuiz={
+                                    name: req.body.quizName,
+                                    created_by: req.session.username,    
+                                    Quiz: output
+                                }
+
+                                QuizList.insert([newQuiz], function(err, result){
+                                    if (err){
+                                        console.log(err);
+                                        res.status(400).send(err);
+                                    }else if(Object.keys(output).length == 0){
+                                        console.log("output is empty!");
+                                        res.status(400).send(err);
+                                    }else {
+                                        console.log("sucessful import Quiz!");
+                                        res.render('inputResult', { Quiz: data, quizName: req.body.quizName, tag: "inputQuiz" });
+                                    }
+
+                                });
+
+                            }
+
+                        });
+                    });
+                    
+                }
+            );
+        } catch (e){
+            res.json({error_code:1,err_desc:"Corupted excel file"});
+        }
+    })
+   
+});
 /* GET home page. */
 
 router.get('/login', function(req, res, next) {
@@ -303,98 +395,7 @@ router.get('/input_quiz/download', function(req, res) {
 });
 
 
-var storage = multer.diskStorage({ //multers disk storage settings
-    destination: function (req, file, cb) {
-        cb(null, './uploads/')
-    },
-    filename: function (req, file, cb) {
-        var datetimestamp = Date.now();
-        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
-    }
-});
 
-var upload = multer({ //multer settings
-    storage: storage,
-    fileFilter : function(req, file, callback) { //file filter
-        if (['xlsx'].indexOf(file.originalname.split('.')[file.originalname.split('.').length-1]) === -1) {
-            return callback(new Error('Wrong extension type'));
-        }
-        callback(null, true);
-    }
-}).single('file');
-
-
-/** API path that will upload the files */
-router.post('/input_quiz/upload', function(req, res) {
-	upload(req,res,function(err){
-        if(!req.file){
-                console.log("No file passed");
-                res.json({error_code:1,err_desc:"No file passed"});
-                return;
-            }
-        if(err){
-                 res.json({error_code:1,err_desc:err});
-                 return;
-            }
-        try {
-            convertExcel(req.file.path,null,null,function(err,data){
-                    if(err) {
-                        return res.json({error_code:1,err_desc:err, data: null});
-                    } 
-
-                    var output = {};
-                    console.log(data);
-                    for(var i=0;i<data.length;i++){
-                        output[i]=data[i];
-                    }
-
-                    var MongoClient = mongodb.MongoClient;
-
-                    MongoClient.connect(url, function(err, db){
-                        if(err){
-                            console.log('Unable to connect Server', err);
-                        }
-                        var QuizList = db.collection('QuizList');
-                        QuizList.find({name : req.body.quizName}).toArray(function(err, result){
-                            console.log(result);
-                            if(result.length>0)
-                                res.status(500).send("repeated name!");
-                            else{
-                                //todo created by hard code
-                                console.log(output);
-                                var newQuiz={
-                                    name: req.body.quizName,
-                                    created_by: req.session.username,    
-                                    Quiz: output
-                                }
-
-                                QuizList.insert([newQuiz], function(err, result){
-                                    if (err){
-                                        console.log(err);
-                                        res.status(400).send(err);
-                                    }else if(Object.keys(output).length == 0){
-                                        console.log("output is empty!");
-                                        res.status(400).send(err);
-                                    }else {
-                                        console.log("sucessful import Quiz!");
-                                        res.render('inputResult', { Quiz: data, quizName: req.body.quizName, tag: "inputQuiz" });
-                                    }
-
-                                });
-
-                            }
-
-                        });
-                    });
-                    
-                }
-            );
-        } catch (e){
-            res.json({error_code:1,err_desc:"Corupted excel file"});
-        }
-    })
-   
-});
 
 
 //get quiz of that teacher
