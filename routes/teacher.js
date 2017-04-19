@@ -6,7 +6,8 @@ var convertExcel = require('excel-as-json').processFile;
 var multer = require('multer');
 // var url = 'mongodb://localhost:27017/site';
 var url = 'mongodb://fyp002:1234@104.199.228.7:27017/site';
-var api = "http://localhost:3000/";
+var api = "http://10.146.0.2:8080/";
+// var api = "http://localhost:8080/";
 var request = require("request");
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
@@ -75,9 +76,7 @@ router.post('/login', function(req, res, next) {
                     res.render('index', { tag: 'Home' });
                 });
             }else{
-                console.log(error);
-                console.log(response.statusCode);
-                res.render('login', {error:response.message });
+                res.render('login', {error:"wrong name or password!" });
             }
         });
     });
@@ -328,6 +327,7 @@ router.post('/input_quiz/upload', function(req, res) {
 	upload(req,res,function(err){
 
         if(!req.file){
+                console.log("No file passed");
                 res.json({error_code:1,err_desc:"No file passed"});
                 return;
             }
@@ -335,6 +335,7 @@ router.post('/input_quiz/upload', function(req, res) {
                  res.json({error_code:1,err_desc:err});
                  return;
             }
+        console.log("req.file.path:");
         console.log(req.file.path);
         try {
             convertExcel(req.file.path,null,null
@@ -362,6 +363,7 @@ router.post('/input_quiz/upload', function(req, res) {
                                 res.status(500).send("repeated name!");
                             else{
                                 //todo created by hard code
+                                console.log("output");
                                 var newQuiz={
                                     name: req.body.quizName,
                                     created_by: req.session.username,    
@@ -371,6 +373,9 @@ router.post('/input_quiz/upload', function(req, res) {
                                 QuizList.insert([newQuiz], function(err, result){
                                     if (err){
                                         console.log(err);
+                                        res.status(400).send(err);
+                                    }else if(Object.keys(output).length == 0){
+                                        console.log("output is empty!");
                                         res.status(400).send(err);
                                     }else {
                                         console.log("sucessful import Quiz!");

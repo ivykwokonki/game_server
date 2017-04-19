@@ -13,7 +13,7 @@ var mongoose = require('mongoose');
 // var students = require('./routes/students');
 
 var app = express();
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 8080);
 app.listen(app.get('port'));
 var server = require('http').createServer(app);
 
@@ -147,7 +147,7 @@ io.on("connection",function(socket){
 
       // room_key = 777;
       console.log("key:"+room_key);
-      if(rooms.indexOf(room_key!=-1))
+      if(rooms.indexOf(room_key)==-1)
         rooms.push(room_key);
       roomUser[room_key] =  {"teacher":
                               { "name":data.username, "id": socket.id }
@@ -171,26 +171,32 @@ io.on("connection",function(socket){
     socket.on("start", function(data){
 
       // append the result data into db
-      var newGame = new Game({
-        game: roomUser[data.key]["game"],
-        quizName: roomUser[data.key]["quizName"],
-        roomName: roomUser[data.key]["roomName"],
-        created_by: roomUser[data.key]["teacher"]["name"],
-        playerList: roomUser[data.key]["student"],
-        Qcount: roomUser[data.key]["Qcount"]
-      })
-      newGame.save(function(err,result){
-        if(err) throw err;
-        else{
-          console.log("yes, get game id return:" + result._id);
-          
-          roomUser[data.key]["id"] = result._id;
-          console.log(roomUser);
-        }
-      })
-      console.log(game4king);
-      if(roomUser[data.key]["game"])
-        socket.to(data.key).emit( "start", {game:roomUser[data.key]["game"]});
+      if(roomUser[data.key]["game"] == "4kingdom"){
+         if (game4king[data.key][0]!=4)
+          return;
+      }
+
+        var newGame = new Game({
+          game: roomUser[data.key]["game"],
+          quizName: roomUser[data.key]["quizName"],
+          roomName: roomUser[data.key]["roomName"],
+          created_by: roomUser[data.key]["teacher"]["name"],
+          playerList: roomUser[data.key]["student"],
+          Qcount: roomUser[data.key]["Qcount"]
+        })
+        newGame.save(function(err,result){
+          if(err) throw err;
+          else{
+            console.log("yes, get game id return:" + result._id);
+            
+            roomUser[data.key]["id"] = result._id;
+            console.log(roomUser);
+          }
+        })
+        console.log(game4king);
+        if(roomUser[data.key]["game"])
+          socket.to(data.key).emit( "start", {game:roomUser[data.key]["game"]});
+      
     });
 
   //////////////end for required ////////////
@@ -212,7 +218,8 @@ io.on("connection",function(socket){
          console.log(rooms);
 
         // 将用户归类到房间
-        if (rooms.includes(key)) {
+        if(rooms.indexOf(room_key)!=-1){
+        // if (rooms.includes(key)) {
             // socket.join(key);
             socket.join(key);
             room = key;

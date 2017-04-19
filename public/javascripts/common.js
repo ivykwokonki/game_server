@@ -10,7 +10,8 @@
 
 // module.exports.getNextSequenceValue = getNextSequenceValue;
 
-url = "http://localhost:3000/";
+// url = "http://localhost:8080/";
+url = "http://10.146.0.2:8080/";
 
 function deleteQuiz(id){
 
