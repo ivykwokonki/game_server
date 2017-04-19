@@ -25,7 +25,8 @@
     "serve-favicon": "~2.3.0",
     "socket.io": "1.7.3",
     "express-session": "1.14.2",
-    "excel-as-json": "2.0.0"
+    "excel-as-json": "2.0.0",
+    "excel": "0.1.7"
   },
   "devDependencies": {
     "excel-as-json": "^2.0.0"
