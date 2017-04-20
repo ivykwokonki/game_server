@@ -64,8 +64,8 @@ router.post('/input_quiz/upload', function(req, res) {
                  return;
             
         }try {
-            // convertExcel(req.file.path,null,null,function(err,data){
-                convertExcel("uploads/test.xlsx","uploadJSON.json",null,function(err,data){
+            convertExcel(req.file.path,null,null,function(err,data){
+                //convertExcel("uploads/test.xlsx","uploadJSON.json",null,function(err,data){
                     if(err) {
                         return res.json({error_code:1,err_desc:err, data: null});
                     } 
